@@ -24,14 +24,17 @@ let printObject = new Print()
 const channel_name = 'KingStuugie'
 var pollCounter = 0
 var dict = {}
+var dictUnpack
 //pollData = global.Array = []
 var kingsNod = true
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 var myPath = `C:/the_bot/Poll_Outputs/`
-var records
+var records = new Array();
 var pollName = ''
 var startPoll = true
+var finishedPoll = false
+var pathName
 /**
  * The following chat event 
  */
@@ -46,11 +49,13 @@ client.on("chat", (channel, user, message, self) => {
                 if (pollMessage[1].toLowerCase() !== 'end' ){
                     pollName = pollMessage[1]
                     startPoll = true
+                    pathName = `${myPath}${pollName}`
                     client.say(channel_name, `Rate ${pollName} from 1 to 10 and help King Stuugie Rate this game`)
                     client.say(channel_name, `Use Command !Poll # to submit your vote.`)
                 }
                 else {
                     startPoll = false
+                    finishedPoll = true
                     pollCounter = 0
                     var dt = Date.now()
                     console.log(`Path and name: ${myPath}${pollName}`)
@@ -61,13 +66,15 @@ client.on("chat", (channel, user, message, self) => {
                             {id: 'rating', title: 'Rating'}
                         ]
                     })
-
+                    var i = 0
                     for (var dict_key in dict){
                         console.log (`dict key: ${dict_key}`)
                         console.log(`Dict[dict_key]: ${dict[dict_key]}`)
                         records = [
-                            {user_ID: dict_key, rating: dict[dict_key]}
-                        ]  
+                            {user_ID: `${dict_key}`, rating: `${dict[dict_key]}`}
+                        ]
+                        i++
+                        console.log(`records: ${records.length}`)  
                     }
                     try {
                         csvWriter.writeRecords(records)
@@ -76,26 +83,32 @@ client.on("chat", (channel, user, message, self) => {
                         })
                     }
                     catch{
-                        console.log(`Error: ${TypeError}`)
+                        console.log(`Error: TC-2`)
                     }
+                    
                 }
             }
         }
         catch {
-            console.log(`Error: ${console.error()}`)
+            console.log(`Error: TC-1`)
         }
     }
     try {
-    if (startPoll === true && regMessage.test(pollMessage[1]) === true){
-        if (pollMessage[1] < 1 || pollMessage[1] > 10){
-            client.say(channel_name,`${user['display-name']}, wtf?  How is ${pollMessage[1]} a number from 1 to 10?`)
+        if (startPoll === true && regMessage.test(pollMessage[1]) === true){
+            if (pollMessage[1] < 1 || pollMessage[1] > 10){
+                client.say(channel_name,`${user['display-name']}, wtf?  How is ${pollMessage[1]} a number from 1 to 10?`)
+            }
+            else{
+                console.log(`User Name: ${user['display-name']} and User ID: ${user['user-id']}`)
+                gatherPollData(user['user-id'], userPollEntry, pollName)
+            }
         }
-        else{
-            console.log(`User Name: ${user['display-name']} and User ID: ${user['user-id']}`)
-            gatherPollData(user['user-id'], userPollEntry, pollName)
+    }catch
+        {
+            console.log(`Error: TC-3`)
         }
-    }}catch{
-        console.log(TypeError)
+    if (finishedPoll === true) {
+        
     }
 })
 
