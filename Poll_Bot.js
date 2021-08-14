@@ -81,7 +81,7 @@ client.on("chat", (channel, user, message, self) => {
     //Start the Poll with a the command !Poll & rating-number passed as the message
     if (startPoll === true && regMessage.test(pollMessage[1]) === true && pollMessage[0].toLowerCase() === `!poll`){
         if (pollMessage[1] < 1 || pollMessage[1] > 10){
-            //I mean, reall?
+            //I mean, really?
             client.say(channel_name,`${user['display-name']}, wtf?  How is ${pollMessage[1]} a number from 1 to 10?`)
         }
         else{
@@ -99,9 +99,10 @@ client.on("chat", (channel, user, message, self) => {
             //records overwrites each time this is iterated, only one record is ever in the variable records
             records.append(
                 {user_ID: `${dict_key}`, rating: `${dict[dict_key]}`}
-            )
-            console.log(`records: ${records.length}`)  
+            ) 
         }
+        //Try to write the records array to csv file
+        //Is not currently doing this
         try {
             csvWriter.writeRecords(records)
             .then(() => {
