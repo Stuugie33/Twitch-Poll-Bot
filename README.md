@@ -18,7 +18,7 @@ your new understanding from the Twitch Developer site:
     ```node Poll_Bot.js```
 ##Activate a poll
 + In chat type **!Poll *Poll_Name*** with no spaces in the poll name, use underscores if necessary
-+ Allow chat to enter their ratings numbers using **!Poll *Number from 1 to 10***
++ Allow chat to enter their ratings numbers using **!Poll *#***
 + End Poll: **!Poll *End***
 
 A CSV file will be created with all the entries for your usage.
