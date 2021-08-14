@@ -72,7 +72,7 @@ client.on("chat", (channel, user, message, self) => {
         }
         else{
             console.log(`User Name: ${user['display-name']} and User ID: ${user['user-id']}`)
-            //pass the User-ID and poll entry to be stored in a dictionary
+            //pass the User-ID and poll entry to be stored in a dictionary.
             gatherPollData(user['user-id'], userPollEntry)
         }
     }
