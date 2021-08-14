@@ -14,19 +14,19 @@ const options = {
         reconnect: true,
     },
     identity: {
-         username: 'Twitch bot channel name',
+         username: 'Your_Bot_Channel_Name',
          password: 'oauth:Token',
     },
-    channels: ['Your Channel Name']
+    channels: ['Your_Channel_Name']
 };
 const client = new tmi.client(options);
 client.connect();
 //Global variables
-const channel_name = 'Your Channel Name' //I like to hard code this value for my channel, can use the channels variable as well
+const channel_name = 'Your_Channel_Name' //I like to hard code this value for my channel, can use the channels variable as well
 var pollCounter = 0
 var dict = {}
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
-//You can make this path to be whatever you like.  It's for saving the CSVs
+//Change this path to whatever path you like
 var myPath = `C:/the_bot/Poll_Outputs/`
 var pollName = ''
 var startPoll = true
@@ -76,18 +76,19 @@ client.on("chat", (channel, user, message, self) => {
             gatherPollData(user['user-id'], userPollEntry)
         }
     }
-    const csvWriter = new createCsvWriter({
-        path: `C:/the_bot/Poll_Outputs/${pollName}${dt}.csv`,
-        header: [
-            {id: 'user_ID', title: 'User ID'},
-            {id: 'rating', title: 'Rating'}
-        ]
-    })
     if (finishedPoll === true) {
+        var records = []
+        const csvWriter = new createCsvWriter({
+            path: `C:/the_bot/Poll_Outputs/${pollName}${dt}.csv`,
+            header: [
+                {id: 'user_ID', title: 'User ID'},
+                {id: 'rating', title: 'Rating'}
+            ]
+        })
         for (var dict_key in dict){
             console.log (`dict key: ${dict_key}`)
             console.log(`Dict[dict_key]: ${dict[dict_key]}`)
-            var records = []
+            
             //records overwrites each time this is iterated, only one record is ever in the variable records
             records.push(
                 {user_ID: `${dict_key}`, rating: `${dict[dict_key]}`}
@@ -104,6 +105,7 @@ client.on("chat", (channel, user, message, self) => {
             console.log(`Error: CSV did not write to file`)
             console.error(error.message)
         }
+        finishedPoll = false
     }
 })
 /**
