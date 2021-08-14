@@ -1,7 +1,7 @@
 /**
  * The following code is meant for the Streamer 
  * and/or Mod to start a 1 to 10 ratings poll.
- * @author King Stuugie
+ * @author King Stuugie & the internet
  */
 //Twitch Connections
 const tmi = require('tmi.js');
