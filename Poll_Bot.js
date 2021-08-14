@@ -1,7 +1,7 @@
 /**
- * The following code is meant for the Streamer 
- * and/or Mod to start a 1 to 10 ratings poll.
- * @author King Stuugie & the internet
+ * The following code allows the Streamer and/or Mod
+ * to start a 1 to 10 ratings poll.
+ * @author King Stuugie
  */
 //Twitch Connections
 const tmi = require('tmi.js');
@@ -14,25 +14,19 @@ const options = {
         reconnect: true,
     },
     identity: {
-         username: 'Twitch Channel Bot Name',
-         password: 'oauth:token',
+         username: 'Twitch bot channel name',
+         password: 'oauth:Token',
     },
     channels: ['Your Channel Name']
 };
 const client = new tmi.client(options);
 client.connect();
 //Global variables
-const Add = require("./Add")
-const Print = require("./Print")
-let addObject = new Add()
-let printObject = new Print()
-const channel_name = 'KingStuugie'
+const channel_name = 'Your Channel Name' //I like to hard code this value for my channel, can use the channels variable as well
 var pollCounter = 0
 var dict = {}
-var dictUnpack
-//pollData = global.Array = []
-var kingsNod = true
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
+//You can make this path to be whatever you like.  It's for saving the CSVs
 var myPath = `C:/the_bot/Poll_Outputs/`
 var pollName = ''
 var startPoll = true
@@ -67,21 +61,13 @@ client.on("chat", (channel, user, message, self) => {
                 pollCounter = 0
                 var dt = Date.now()
                 console.log(`Path and name: ${myPath}${pollName}`)
-                //create an instance for csvWriter with 2 headers
-                const csvWriter = new createCsvWriter({
-                    path: `C:/the_bot/Poll_Outputs/${pollName}${dt}.csv`,
-                    header: [
-                        {id: 'user_ID', title: 'User ID'},
-                        {id: 'rating', title: 'Rating'}
-                    ]
-                })
             }
         }
     }
     //Start the Poll with a the command !Poll & rating-number passed as the message
     if (startPoll === true && regMessage.test(pollMessage[1]) === true && pollMessage[0].toLowerCase() === `!poll`){
         if (pollMessage[1] < 1 || pollMessage[1] > 10){
-            //I mean, really?
+            //I mean, reall?
             client.say(channel_name,`${user['display-name']}, wtf?  How is ${pollMessage[1]} a number from 1 to 10?`)
         }
         else{
@@ -90,7 +76,13 @@ client.on("chat", (channel, user, message, self) => {
             gatherPollData(user['user-id'], userPollEntry)
         }
     }
-    
+    const csvWriter = new createCsvWriter({
+        path: `C:/the_bot/Poll_Outputs/${pollName}${dt}.csv`,
+        header: [
+            {id: 'user_ID', title: 'User ID'},
+            {id: 'rating', title: 'Rating'}
+        ]
+    })
     if (finishedPoll === true) {
         for (var dict_key in dict){
             console.log (`dict key: ${dict_key}`)
@@ -99,18 +91,18 @@ client.on("chat", (channel, user, message, self) => {
             //records overwrites each time this is iterated, only one record is ever in the variable records
             records.push(
                 {user_ID: `${dict_key}`, rating: `${dict[dict_key]}`}
-            ) 
+            )
+            console.log(`records: ${records.length}`)  
         }
-        //Try to write the records array to csv file
-        //Is not currently doing this
         try {
             csvWriter.writeRecords(records)
             .then(() => {
                 console.log(`...CSV write complete`)
             })
         }
-        catch{
+        catch(error){
             console.log(`Error: CSV did not write to file`)
+            console.error(error.message)
         }
     }
 })
