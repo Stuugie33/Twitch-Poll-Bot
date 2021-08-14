@@ -4,10 +4,10 @@ the [Twitch developers site](https://dev.twitch.tv/docs/irc)
 # Install
 ## Node
 1. Download and install [Node.js](https://nodejs.org/en/)
-2. Open Command Prompt, install tmi.js using the Node Package Manager.
-```npm install tmi.js```
-3. Once 2. is complete type:
+2. Open Command Prompt, install npm (Node Package Manager)
 ```npm install```
+3. From Command Prompt install tmi.js:
+```npm install tmi.js```
 4. In the Poll_Bot.js replace the 3 following variable values, in accordance to
 your new understanding from the Twitch Developer site:
 + Your_Twitch_Bot_Channel_Name (1 instance)
