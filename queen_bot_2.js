@@ -8,8 +8,8 @@ const options = {
         reconnect: true,
     },
     identity: {
-         username: 'her_majesty_the_queen',
-         password: 'oauth:jk7hruwnxv2owg30wysfoxc6jefgcq',
+         username: 'bot name',
+         password: 'oauth:token',
     },
     channels: ['KingStuugie']
 };
