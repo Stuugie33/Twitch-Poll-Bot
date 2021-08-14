@@ -89,7 +89,7 @@ client.on("chat", (channel, user, message, self) => {
             console.log (`dict key: ${dict_key}`)
             console.log(`Dict[dict_key]: ${dict[dict_key]}`)
             
-            //records overwrites each time this is iterated, only one record is ever in the variable records
+            //records overwrites each time this is iterated, only one record is ever in the variable records.
             records.push(
                 {user_ID: `${dict_key}`, rating: `${dict[dict_key]}`}
             )
