@@ -8,15 +8,16 @@ the [Twitch developers site](https://dev.twitch.tv/docs/irc)
 ```npm install```
 3. From Command Prompt install tmi.js:
 ```npm install tmi.js```
-4. In the Poll_Bot.js replace the 3 following variable values, in accordance to
-your new understanding from the Twitch Developer site:
-+ Your_Twitch_Bot_Channel_Name (1 instance)
-+ Token - Generate this with [https://twitchapps.com/tmi/](https://twitchapps.com/tmi/) (1 instance)
-+ Broadcaster_Channel_Name (2 instances)
+4. In the same working folder as this bot, create a file called ```settings.json```
+   + use the settings.json file to set your connection variables for the next step
+   + To find your oathToken, go to: [https://twitchapps.com/tmi/](https://twitchapps.com/tmi/)
+
 # Run Bot
 1. From Command Prompt type
     ```node Poll_Bot.js```
-##Activate a poll
+2. In the chat window type !game (**You must have a twitch command that outputs the game name into the chat window**)
+
+## Activate a poll
 + In chat type **!Poll *Poll_Name*** with no spaces in the poll name, use underscores if necessary
 + Allow chat to enter their ratings numbers using **!Poll *#***
 + End Poll: **!Poll *End***
