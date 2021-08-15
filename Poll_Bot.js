@@ -5,6 +5,9 @@
  */
 //Twitch Connections
 const tmi = require("tmi.js");
+//settings.json file required
+const settings = require("./settings.json");
+
 const options = {
   options: {
     debug: true,
@@ -14,34 +17,61 @@ const options = {
     reconnect: true,
   },
   identity: {
-    username: "Your_Twitch_Bot_Channel_Name",
-    password: "oauth:Token",
+    username: `${settings.Your_Twitch_Bot_Channel_Name}`,
+    password: `oauth:${settings.Token}`,
   },
-  channels: ["Broadcaster_Channel_Name"],
+  channels: [`${settings.Broadcaster_Channel_Name}`],
 };
 const client = new tmi.client(options);
 client.connect();
 //Global variables
-const channel_name = "Broadcaster_Channel_Name"; //I like to hard code this value for my channel, can use the channels variable as well
+const channel_name = `${settings.Broadcaster_Channel_Name}`; //I like to hard code this value for my channel, can use the channels variable as well
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+/**
+ * Create a directory like assigned to myPath.  You can name this path
+ * whatever you like but this is only used for the poll outputs.
+ */
+var myPath = settings.bot_path;
 var pollCounter = 0;
 var dict = {};
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-//Change this path to whatever path you want to save your Poll resulst in
-var myPath = `C:/the_bot/Poll_Outputs/`;
-var pollName = "";
+var pollName = new String();
+var pathName = new String();
 var startPoll = true;
 var finishedPoll = false;
-var pathName;
+var fullDate = new String();
+var gameName = new String();
+var msg = new String();
+var dt = new Date();
+var dateToSplit = dt.toLocaleDateString();
+// dateToSplit's format is m/d/yyyy which is not this author's desired format
+var splitDate = dateToSplit.split("/");
+//fullDate formats to yyyy-mm-dd
+fullDate = `${splitDate[2]}-${splitDate[0].padStart(
+  2,
+  "0"
+)}-${splitDate[1].padStart(2, "0")}`;
 /**
  * The following chat event is a general read from
  * the Twitch chat.
  */
 client.on("chat", (channel, user, message, self) => {
-  //ToDo: what if '!Poll' is entered by mistake?
+  /**
+   * ToDo:
+   * Read the Twitch API to know what the game-name is.
+   * At the time of this versioning, msg is populated at the end
+   * of this event as is checked to see if the last message was
+   * !game (I use this command at the start of the stream to populate this variable)
+   * If it was then take the current message and assign it to the
+   * gameName variable.  This breaks when chat is bumping.
+   * This really needs a better way to read the game-name.
+   */
+  if (msg === "!game") {
+    gameName = message;
+  }
   var pollMessage = message.split(" ");
   var userPollEntry = pollMessage[1];
   var regMessage = new RegExp(`[0-9]`);
-  //Only allow the broadcaster or mod
+  //Only allow the broadcaster or mod to activate a Poll
   if (
     user.mod ||
     user["usertype"] === "mod" ||
@@ -60,16 +90,18 @@ client.on("chat", (channel, user, message, self) => {
         pathName = `${myPath}${pollName}`;
         client.say(
           channel_name,
-          `Rate ${pollName} from 1 to 10 and help ${channel_name} rate this game`
+          `Rate **${pollName}** from 1 to 10 and help ${channel_name} rate this game`
         );
-        client.say(channel_name, `Use the command !Poll # to submit your vote.`);
+        client.say(
+          channel_name,
+          `Use the command !Poll # to submit your vote.`
+        );
       }
       //if pollMessage[1] = end
       else {
         startPoll = false;
         finishedPoll = true;
         pollCounter = 0;
-        var dt = Date.now();
       }
     }
   }
@@ -86,8 +118,9 @@ client.on("chat", (channel, user, message, self) => {
         `${user["display-name"]}, wtf?  How is ${pollMessage[1]} a number from 1 to 10?`
       );
     } else {
+      var wholeNumber = parseInt(userPollEntry);
       console.log(
-        `User ID: ${user["user-id"]} || Rating Entry: ${userPollEntry}`
+        `User ID: ${user["user-id"]} || Rating Entry: ${wholeNumber}`
       );
       //pass the User-ID and poll entry to be stored in a dictionary
       gatherPollData(user["user-id"], userPollEntry);
@@ -96,7 +129,7 @@ client.on("chat", (channel, user, message, self) => {
   if (finishedPoll === true) {
     var records = [];
     const csvWriter = new createCsvWriter({
-      path: `${myPath}${pollName}${dt}.csv`,
+      path: `${myPath}${gameName}_${pollName}_${fullDate}.csv`,
       header: [
         { id: "user_ID", title: "User ID" },
         { id: "rating", title: "Rating" },
@@ -115,8 +148,12 @@ client.on("chat", (channel, user, message, self) => {
       console.error(error.message);
     }
     finishedPoll = false;
-    client.say (channel_name,`All ratings for ${pollName} have been entered, thank you!`)
+    client.say(
+      channel_name,
+      `All ratings for ${pollName} have been entered, thank you!`
+    );
   }
+  msg = message;
 });
 /**
  * Function to add unique id and poll entries into
