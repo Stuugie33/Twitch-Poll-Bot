@@ -1,0 +1,6 @@
+{
+    "Token": "Your Oath Token",
+    "Your_Twitch_Bot_Channel_Name": "Bot Channel's name",
+    "Broadcaster_Channel_Name": "Broadcaster Channel Name",
+    "bot_path": "Your desired local directory; like <C:C:/the_bot/Poll_Outputs/>"
+}
